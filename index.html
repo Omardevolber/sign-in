@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول - Mohasib Friend</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #f0f0f0;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 300px;
+        }
+        input {
+            padding: 10px;
+            font-size: 1em;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/aws-amplify@latest/dist/aws-amplify.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h2>تسجيل الدخول</h2>
+        <input type="text" id="username" placeholder="اسم المستخدم">
+        <input type="password" id="password" placeholder="كلمة المرور">
+        <button id="signinButton">تسجيل الدخول</button>
+        <div class="signin-link">
+            <span>ليس لديك حساب؟</span>
+            <a href="signup.html">تسجيل حساب جديد</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // التحقق من تحميل مكتبة Amplify
+            if (typeof Amplify === 'undefined') {
+                alert("هناك مشكلة في تحميل مكتبة AWS Amplify. يرجى إعادة تحميل الصفحة أو التحقق من اتصال الإنترنت.");
+                return;
+            }
+
+            // تكوين AWS Amplify
+            Amplify.configure({
+                Auth: {
+                    region: 'us-east-1',
+                    userPoolId: 'us-east-1_XbYL1KBNI',
+                    userPoolWebClientId: '47rab505uoriupl97i760pbte8',
+                    authenticationFlowType: 'USER_PASSWORD_AUTH',
+                }
+            });
+
+            // الفانكشن لتسجيل الدخول
+            async function signIn() {
+                const username = document.getElementById('username').value.trim();
+                const password = document.getElementById('password').value.trim();
+
+                if (!username || !password) {
+                    alert('يرجى ملء جميع الحقول');
+                    return;
+                }
+
+                try {
+                    const user = await Amplify.Auth.signIn(username, password);
+                    alert('تم تسجيل الدخول بنجاح');
+                    // إعادة التوجيه إلى لوحة التحكم بعد تسجيل الدخول الناجح
+                    window.location.href = 'https://personal-opn5odjq.outsystemscloud.com/MohasibFriend/homedashboard';
+                } catch (error) {
+                    console.error('خطأ في تسجيل الدخول:', error);
+                    alert('فشل تسجيل الدخول. يرجى التحقق من اسم المستخدم وكلمة المرور والمحاولة مرة أخرى.');
+                }
+            }
+
+            // إضافة مستمع للنقر على زر تسجيل الدخول
+            document.getElementById('signinButton').addEventListener('click', signIn);
+        });
+    </script>
+</body>
+</html>
